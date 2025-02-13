@@ -1,9 +1,11 @@
 import * as core from '@actions/core'
 import { setLanguagesForUpdate } from './set-languages-for-update'
 import { cmd } from './cmd'
+import { DEFAULT_LIBLAB_CONFIG_PATH } from './constants'
 
 const LIBLAB_TOKEN_INPUT_KEY = 'liblab_token'
 const LIBLAB_GITHUB_TOKEN_INPUT_KEY = 'liblab_github_token'
+const LIBLAB_CONFIG_PATH = 'liblab_config_path'
 const GITHUB_TOKEN_ENV_VAR_NAME = 'GITHUB_TOKEN'
 const LIBLAB_TOKEN_ENV_VAR_NAME = 'LIBLAB_TOKEN'
 
@@ -22,9 +24,14 @@ export async function run(): Promise<void> {
         required: true
       }
     )
+    const liblabConfigPath: string =
+      core.getInput(LIBLAB_CONFIG_PATH, {
+        required: false
+      }) || DEFAULT_LIBLAB_CONFIG_PATH
 
     core.exportVariable(LIBLAB_TOKEN_ENV_VAR_NAME, liblabToken)
     core.exportVariable(GITHUB_TOKEN_ENV_VAR_NAME, liblabGithubToken)
+    core.exportVariable(LIBLAB_CONFIG_PATH, liblabConfigPath)
 
     const languagesToUpdate = await setLanguagesForUpdate()
     if (!languagesToUpdate) {

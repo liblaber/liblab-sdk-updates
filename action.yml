@@ -14,6 +14,9 @@ inputs:
   liblab_github_token:
     description: 'The github token that will allow posting PRs to SDK repos'
     required: true
+  liblab_config_path:
+    description: 'The path to the liblab config file'
+    required: false
 
 outputs:
   status:
