@@ -6,13 +6,13 @@ import {
   SdkEngines,
   SdkEngineVersions
 } from './types/sdk-language-engine-map'
-import { LIBLAB_CONFIG_PATH, readLiblabConfig } from './read-liblab-config'
+import { readLiblabConfig } from './read-liblab-config'
 import fs from 'fs-extra'
 import {
   fetchCurrentSdkVersion,
   fetchManifestFile
 } from './fetch-git-repo-files'
-import { DEFAULT_SDK_VERSION } from './constants'
+import { DEFAULT_LIBLAB_CONFIG_PATH, DEFAULT_SDK_VERSION } from './constants'
 
 export async function bumpSdkVersionOrDefault(
   language: Language,
@@ -58,8 +58,10 @@ export async function bumpSdkVersionOrDefault(
   return bumpedSdkVersion
 }
 
-export async function setLanguagesForUpdate(): Promise<string[]> {
-  const liblabConfig = await readLiblabConfig()
+export async function setLanguagesForUpdate(
+  configPath: string = DEFAULT_LIBLAB_CONFIG_PATH
+): Promise<string[]> {
+  const liblabConfig = await readLiblabConfig(configPath)
   const languagesToUpdate = []
 
   for (const language of liblabConfig.languages) {
@@ -110,7 +112,7 @@ export async function setLanguagesForUpdate(): Promise<string[]> {
 
   if (languagesToUpdate.length > 0) {
     liblabConfig.languages = [...languagesToUpdate]
-    await fs.writeJson(LIBLAB_CONFIG_PATH, liblabConfig, { spaces: 2 })
+    await fs.writeJson(configPath, liblabConfig, { spaces: 2 })
   }
 
   return languagesToUpdate
